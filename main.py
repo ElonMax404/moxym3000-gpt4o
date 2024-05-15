@@ -86,7 +86,7 @@ class Agent:
                 action = action.split("(")[1]
                 x, y = action.split(",")
                 y = y.split(")")[0]
-                pyautogui.moveRel(int(x), (y))
+                pyautogui.moveRel(int(x), int(y))
             elif action == "!RMB_click":
                 pyautogui.rightClick()
             elif action == "!LMB_click":
