@@ -2,8 +2,6 @@ import openai
 import pyautogui
 from PIL import Image
 from typing_extensions import Self
-from typing import List
-from enum import Enum
 import base64
 from io import BytesIO  
 
