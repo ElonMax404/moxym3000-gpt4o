@@ -31,7 +31,7 @@ class Agent:
         self.messages = [{"role": "system", "content": instructions}]
         self.model: str = "gpt-4o"
         self.mouse_position = pyautogui.Point
-        self.actions_buffer = ['None']
+        self.actions_buffer = []
 
     def encode_image(image: Image):
         buffered = BytesIO()
@@ -70,15 +70,30 @@ class Agent:
                 "content": output
             }
         )
-        
-        commands_string = output.split("{{")[1].split("}}")[0]
-        commands = commands_string.split("&&")
+        n_blocks = output.count("{{")
+        if n_blocks > 1:
+            temp = output.split("{{")
+            command_strings = []
+            commands_string = ""
+            for i, string in enumerate(temp):
+                if "}}" not in string:
+                    continue
+                string = string.split("}}")[0]
+                command_strings.append(string)
+            for block in command_strings:
+                commands_string += f'{block}{"&&"if i != len(temp) else ""}' # i am very sorry
+        elif n_blocks == 1:
+            commands_string = output.split("{{")[1].split("}}")[0]
+        else:
+            commands_string = "!None"
+
+        commands = commands_string.split("&&") if "&&" in commands_string else [commands_string]
         for command in commands:
             command = command.strip()
-            self.actions_buffer.append(command)
+            if command != "":
+                self.actions_buffer.append(command)
+        print(f"Agent's actions buffer: {self.actions_buffer}")
             
-        
-    
     def perform(self):
         for action in self.actions_buffer:
             print(f"Performing action: {action}")
@@ -97,10 +112,10 @@ class Agent:
             elif action.startswith("!sleep"):
                 seconds = float(action.split("(")[1].split(")")[0])
                 pyautogui.sleep(seconds)
-            elif action == "None":
+            elif action == "!None":
                 pass
             else:
-                raise ValueError(f"Unimplemented action requested by model: {action}")
+                raise ValueError(f"Unexisting action requested by model: {action}")
         self.actions_buffer.clear()
                 
 
@@ -113,9 +128,7 @@ def main():
         output = agent1.prompt(user).get(display=True)
         agent1.parse_output(output)
         agent1.perform()
-        second_pass = agent1.prompt("Look at the screen. Did that bring expected results? If not, adjust accordingly and try again.").get(display=True)
-        agent1.parse_output(second_pass)
-        agent1.perform()
+
 
 
 

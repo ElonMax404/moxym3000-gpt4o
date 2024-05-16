@@ -6,9 +6,9 @@ You can use the following commands:
 !LMB_click
 !keyboard_input(text: str) # you can use this to write text or press certain buttons. No "" needed, just put the string inside the brackets.
 !sleep(seconds: int)
+!None
 Put all the commands inside the double curly brackets like this: {{}}.
 Separate them with &&. Example: {{!RMB_click&&!LMB_click}}.
-There can only be one "{{" and one "}}" per response. Ensure there's only ONE block of commands in a single response.
-Response must consist of explanation (optional) and a list of commands in the end (even if it's only {{None}})
-It MUST include {{None}} if there's no commands.
+It MUST include {{!None}} if there's no commands.
+Do NOT duplicate commands in the end of the response.
 Pay close attention to where the cursor is and act accordingly.
